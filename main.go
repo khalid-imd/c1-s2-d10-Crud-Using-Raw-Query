@@ -132,6 +132,8 @@ func detail(w http.ResponseWriter, r *http.Request) {
 
 	var DetailProject = Project{}
 
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+
 	// for i, project := range projectData {
 	// 	if i == index {
 	// 		DetailProject = Project{
@@ -147,8 +149,6 @@ func detail(w http.ResponseWriter, r *http.Request) {
 	// 		}
 	// 	}
 	// }
-
-	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 
 	err = connection.Conn.QueryRow(context.Background(), "SELECT id, title, start_date, end_date, description, duration FROM db_project WHERE id=$1", id).Scan(
 		&DetailProject.Id, &DetailProject.Title, &DetailProject.StartDate, &DetailProject.EndDate, &DetailProject.Description, &DetailProject.Duration)
@@ -277,16 +277,10 @@ func edit(w http.ResponseWriter, r *http.Request) {
 
 	var DetailProject = Project{}
 
-	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+	index, _ := strconv.Atoi(mux.Vars(r)["index"])
 
-	err = connection.Conn.QueryRow(context.Background(), "SELECT id, title, start_date, end_date, description, FROM db_project WHERE id=$1", id).Scan(
-		&DetailProject.Id, &DetailProject.Title, &DetailProject.StartDate, &DetailProject.EndDate, &DetailProject.Description)
-
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("message : " + err.Error()))
-		return
-	}
+	err = connection.Conn.QueryRow(context.Background(), "SELECT id, title, start_date, end_date, description, duration FROM db_project WHERE id=$1", index).Scan(
+		&DetailProject.Id, &DetailProject.Title, &DetailProject.StartDate, &DetailProject.EndDate, &DetailProject.Description, &DetailProject.Duration)
 
 	// for i, project := range projectData {
 	// 	if i == index {
